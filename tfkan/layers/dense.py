@@ -121,20 +121,21 @@ class DenseKAN(Layer, LayerKAN):
         return spline_out
     
     def _check_and_reshape_inputs(self, inputs):
-        shape = tf.shape(inputs)
+        shape = inputs.get_shape()
         ndim = len(shape)
-        try:
-            assert ndim >= 2
-        except AssertionError:
-            raise ValueError(f"expected min_ndim=2, found ndim={ndim}. Full shape received: {shape}")
-
-        try:
-            assert inputs.shape[-1] == self.in_size
-        except AssertionError:
-            raise ValueError(f"expected last dimension of inputs to be {self.in_size}, found {shape[-1]}")
         
+        tf.debugging.assert_greater_equal(ndim,
+                                          2,
+                                          f"Expected min_ndim=2, found ndim={ndim}. Full shape received: {shape}"
+                                          )
+        
+        tf.debugging.assert_equal(inputs.shape[-1],
+                                  self.in_size,
+                                  f"Expected last dimension of inputs to be {self.in_size}, found {shape[-1]}."
+        )
+        
+        orig_shape = tf.shape(inputs)[:-1]
         # reshape the inputs to (-1, in_size)
-        orig_shape = shape[:-1]
         inputs = tf.reshape(inputs, (-1, self.in_size))
 
         return inputs, orig_shape
@@ -217,7 +218,7 @@ class DenseKAN(Layer, LayerKAN):
             "spline_order": self.spline_order,
             "grid_range": self.grid_range,
             "spline_initialize_stddev": self.spline_initialize_stddev,
-            "basis_activation": self.basis_activation
+            "basis_activation": tf.keras.activations.serialize(self.basis_activation)
         })
 
         return config
