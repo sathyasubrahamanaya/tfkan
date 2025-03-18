@@ -1,5 +1,5 @@
 import tensorflow as tf
-from keras.layers import Layer
+from tensorflow.keras.layers import Layer
 from ..ops.spline import calc_spline_values, fit_spline_coef
 from ..ops.grid import build_adaptive_grid
 
