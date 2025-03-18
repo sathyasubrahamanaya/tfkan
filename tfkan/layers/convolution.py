@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 
-from keras.layers import Layer, Conv2D
+from tensorflow.keras.layers import Layer, Conv2D
 from .base import LayerKAN
 from .dense import DenseKAN
 
